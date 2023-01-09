@@ -11,7 +11,12 @@ pub fn run(op_type: &str, file_path: &str) {
         }
 
         "assemble" => {
-            assemble_code(file_path);
+            let result = assemble_code(file_path);
+            println!("{}", result);
+        }
+
+        "assemble-and-run" => {
+            assemble_and_run(file_path);
         }
 
         "disassemble" => {
@@ -38,10 +43,23 @@ fn run_program(file_path: &str) {
     emulator::cpu::start(&program);
 }
 
-fn assemble_code(file_path: &str) {
+fn assemble_code(file_path: &str) -> String {
     let code: String = fs::read_to_string(file_path).expect("File not found!");
+
     let result = &assembly::assembler::assemble(code);
-    println!("{}", result);
+
+    return result.clone()
+}
+
+
+fn assemble_and_run(file_path: &str) {
+    let mut program: Vec<i32> = Vec::new();
+    
+    for s in assemble_code(file_path).split(",") {
+        program.push(s.parse().expect("Just numbers are allowed as instructions"));
+    };
+
+    emulator::cpu::start(&program);
 }
 
 fn disassemble_code(_: &str) {
