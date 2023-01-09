@@ -1,5 +1,5 @@
 use std::io;
-use crate::common::instructions as Instructions;
+use crate::common::constants::*;
 
 pub fn start(program: &Vec<i32>) {
     let mut regs: [i32; 4] = [0, 0, 0, 0];
@@ -29,7 +29,7 @@ fn run_instruction(
         .expect("pointer counter out of range!");
 
     match instr {
-        &Instructions::MOVR => {
+        &MOVR => {
             current_pc += 1;
 
             let register_dest = program[current_pc as usize];
@@ -41,7 +41,7 @@ fn run_instruction(
             regs[register_dest as usize] = regs[register_src as usize];
         }
 
-        &Instructions::MOVV => {
+        &MOVV => {
             current_pc += 1;
 
             let register_dest = program[current_pc as usize];
@@ -53,7 +53,7 @@ fn run_instruction(
             regs[register_dest as usize] = value;
         }
 
-        &Instructions::ADD => {
+        &ADD => {
             current_pc += 1;
 
             let register_dest = program[current_pc as usize];
@@ -65,7 +65,7 @@ fn run_instruction(
             regs[register_dest as usize] += regs[register_src as usize];
         }
 
-        &Instructions::SUB => {
+        &SUB => {
             current_pc += 1;
 
             let register_dest = program[current_pc as usize];
@@ -77,7 +77,7 @@ fn run_instruction(
             regs[register_dest as usize] -= regs[register_src as usize];
         }
 
-        &Instructions::PUSH => {
+        &PUSH => {
             current_pc += 1;
 
             let register_src = program[current_pc as usize];
@@ -86,7 +86,7 @@ fn run_instruction(
             stack.push(program[register_src as usize]);
         }
 
-        &Instructions::POP => {
+        &POP => {
             current_pc += 1;
 
             let register_dest = program[current_pc as usize];
@@ -95,14 +95,14 @@ fn run_instruction(
             regs[register_dest as usize] = stack.pop().expect("You need to push before pop!");
         }
 
-        &Instructions::JP => {
+        &JP => {
             current_pc += 1;
 
             let address = program[current_pc as usize];
             current_pc = address;
         }
 
-        &Instructions::JL => {
+        &JL => {
             current_pc += 1;
 
             let r1 = program[current_pc as usize];
@@ -119,7 +119,7 @@ fn run_instruction(
             }
         }
 
-        &Instructions::CALL => {
+        &CALL => {
             current_pc += 1;
 
             let address = program[current_pc as usize];
@@ -129,18 +129,18 @@ fn run_instruction(
             current_pc = address;
         }
 
-        &Instructions::FLAG => {
+        &FLAG => {
             current_pc += 1;
         }
 
-        &Instructions::RET => {
+        &RET => {
             current_pc += 1;
 
             let address = program[current_pc as usize];
             current_pc = address;
         }
 
-        &Instructions::PRINT => {
+        &PRINT => {
             current_pc += 1;
 
             let register = program[current_pc as usize];
@@ -149,26 +149,7 @@ fn run_instruction(
             println!("{}", regs[register as usize]);
         }
 
-        // &Instructions::PRINTS => {
-        //     current_pc += 1;
-
-        //     let mut text: String = String::new();
-
-        //     if program[current_pc as usize] == STRING_STOPPER {
-        //         current_pc += 1;
-        //         loop {
-        //             if program[current_pc as usize] == STRING_STOPPER {
-        //                 break;
-        //             }
-
-        //             text += program[current_pc as usize].;
-        //             current_pc += 1;
-        //         }
-        //     }
-
-        //     println!("{}", regs[register as usize]);
-        // }
-        &Instructions::SCAN => {
+        &SCAN => {
             current_pc += 1;
 
             let register = program[current_pc as usize];
@@ -185,7 +166,7 @@ fn run_instruction(
             regs[register as usize] = input;
         }
 
-        &Instructions::CLS => {
+        &CLS => {
             current_pc += 1;
 
             assert!(std::process::Command::new("cls")
@@ -195,7 +176,7 @@ fn run_instruction(
                 .success());
         }
 
-        &Instructions::HALT => {
+        &HALT => {
             current_pc += 1;
 
             halted = true;
