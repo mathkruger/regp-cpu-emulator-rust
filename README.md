@@ -14,7 +14,6 @@ cargo run -- assemble examples/code/double.asm > path/to/save/the/result
 # to assemble and run
 cargo run -- assemble-and-run examples/code/double.asm
 
-
 # to run code already assembled
 cargo run -- run examples/compiled/double
 ```

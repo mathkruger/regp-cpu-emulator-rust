@@ -44,7 +44,7 @@ fn get_bytecode(tokens: &Vec<Vec<String>>) -> String {
             let token = item.trim().to_uppercase();
 
             if index == 0 {
-                if !token.starts_with(".") && !token.starts_with(":") {
+                if !token.starts_with(".") && !token.ends_with(":") {
                     bytes.push(get_instruction_code(&token));
                 } else if token.starts_with(".") && token.ends_with(":") {
                     bytes.push(FLAG);
