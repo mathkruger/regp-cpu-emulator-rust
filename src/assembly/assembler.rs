@@ -13,12 +13,19 @@ fn get_tokens(code: &str) -> Vec<Vec<String>> {
     let mut lines: Vec<Vec<String>> = Vec::new();
 
     for line in code.lines() {
-        let mut line_vector: Vec<String> = Vec::new();
-        let separator = Regex::new(r"([\s,])").expect("Invalid regex");
-        let splits: Vec<_> = separator.split(line).into_iter().collect();
+        if line.starts_with(";") || line.len() == 0 {
+            continue;
+        }
 
-        for token in splits {
-            line_vector.push(token.to_string());
+        let mut line_vector: Vec<String> = Vec::new();
+        let regex_string: &str = "([\"\"].+?[\"\"]|[^ ]+)";
+
+        let regex = Regex::new(regex_string).expect("Invalid regex");
+
+        for capture in regex.captures_iter(line) {
+            line_vector.push(capture.get(0)
+                .expect("The tokenization failed.")
+                .as_str().to_string());
         }
 
         lines.push(line_vector);
@@ -39,21 +46,41 @@ fn get_bytecode(tokens: &Vec<Vec<String>>) -> String {
             if index == 0 {
                 if !token.starts_with(".") && !token.starts_with(":") {
                     bytes.push(get_instruction_code(&token));
+                } else if token.starts_with(".") && token.ends_with(":") {
+                    bytes.push(FLAG);
                 }
-            } else if token.starts_with(".") && token.contains(":") {
-                bytes.push(FLAG);
             } else {
                 if is_valid_register(&token) {
                     bytes.push(get_register_code(&token));
                 } else {
-                    if token.starts_with(".") && !token.contains(":") {
-                        let tokens_flatten = flatten(tokens.clone());
+                    if token.contains("\"") {
+                        for char_to_add in token.chars() {
+                            let charcode: u8 = char_to_add as u8;
+                            bytes.push(charcode as i32);
+                        }
+                    } else if token.starts_with(".") && !token.ends_with(":") {
+                        let mut list_to_find: Vec<String> = Vec::new();
+
+                        for item in flatten(tokens.clone()) {
+                            if item.contains("\"") {
+                                let char_array: Vec<String> = item.chars()
+                                    .map(|x| x.to_string())
+                                    .collect();
+                                
+                                list_to_find = [list_to_find, char_array].concat();
+                            } else {
+                                list_to_find.push(item);
+                            }
+                        }
+
                         let token_to_find = token + ":";
-                        let address = tokens_flatten.into_iter().find(|x| token_to_find == x.to_uppercase()).expect("Flag reference not found!");
+                        let address = list_to_find
+                            .into_iter()
+                            .position(|x| token_to_find == x.to_uppercase())
+                            .expect("Flag reference not found!");
 
-                        bytes.push(address.parse().expect("An address should be a number!"));
-
-                    } else if !token.contains(":") {
+                        bytes.push(address as i32);
+                    } else if !token.ends_with(":") {
                         bytes.push(token.parse().expect("A register reference/value should be a number!"));
                     }
                 }

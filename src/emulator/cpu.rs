@@ -1,4 +1,4 @@
-use std::io;
+use std::{io, ops::Add};
 use crate::common::constants::*;
 
 pub fn start(program: &Vec<i32>) {
@@ -83,7 +83,7 @@ fn run_instruction(
             let register_src = program[current_pc as usize];
             current_pc += 1;
 
-            stack.push(program[register_src as usize]);
+            stack.push(regs[register_src as usize]);
         }
 
         &POP => {
@@ -134,9 +134,7 @@ fn run_instruction(
         }
 
         &RET => {
-            current_pc += 1;
-
-            let address = program[current_pc as usize];
+            let address = stack.pop().expect("You should CALL defore RET");
             current_pc = address;
         }
 
@@ -147,6 +145,17 @@ fn run_instruction(
             current_pc += 1;
 
             println!("{}", regs[register as usize]);
+        }
+
+        &PRINTS => {
+            current_pc += 1;
+
+            let text: String;
+
+            (text, current_pc) = read_string(program, current_pc);
+            current_pc += 1;
+
+            println!("{}", text);
         }
 
         &SCAN => {
@@ -186,4 +195,20 @@ fn run_instruction(
     }
 
     (regs, stack, halted, current_pc)
+}
+
+fn read_string(program: &Vec<i32>, mut pc: i32) -> (String, i32) {
+    let mut total_string: String = String::new();
+
+    if program[pc as usize] == STRING_STOPPER {
+        pc = pc + 1;
+        while program[pc as usize] != STRING_STOPPER {
+            let char_code: u8 = program[pc as usize] as u8;
+            let char_to_add: char = char_code as char;
+            total_string = total_string.add(&char_to_add.to_string());
+            pc = pc + 1;
+        }
+    }
+
+    (total_string, pc)
 }

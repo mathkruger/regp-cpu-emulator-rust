@@ -1,0 +1,41 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "debug 'run'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=regp-cpu-emulator-rust",
+                    "--package=regp-cpu-emulator-rust"
+                ],
+                "filter": {
+                    "name": "regp-cpu-emulator-rust",
+                    "kind": "bin"
+                }
+            },
+            "args": ["run", "examples/compiled/fibonacci"],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "debug 'assemble'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=regp-cpu-emulator-rust",
+                    "--package=regp-cpu-emulator-rust"
+                ],
+                "filter": {
+                    "name": "regp-cpu-emulator-rust",
+                    "kind": "bin"
+                }
+            },
+            "args": ["assemble", "examples/code/fibonacci.asm"],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}

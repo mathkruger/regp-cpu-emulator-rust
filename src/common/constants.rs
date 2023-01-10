@@ -12,6 +12,7 @@ pub const CALL: i32 = 42;
 pub const FLAG: i32 = 43;
 pub const RET: i32 = 50;
 pub const PRINT: i32 = 60;
+pub const PRINTS: i32 = 61;
 pub const SCAN: i32 = 62;
 pub const CLS: i32 = 70;
 pub const HALT: i32 = 255;
@@ -20,6 +21,8 @@ pub const R0: i32 = 0;
 pub const R1: i32 = 1;
 pub const R2: i32 = 2;
 pub const R3: i32 = 3;
+
+pub const STRING_STOPPER: i32 = 34;
 
 pub fn is_valid_register(name: &str) -> bool {
     let regs = [
@@ -56,6 +59,7 @@ pub fn get_instruction_code(name: &str) -> i32 {
         ("FLAG", FLAG),
         ("RET", RET),
         ("PRINT", PRINT),
+        ("PRINTS", PRINTS),
         ("SCAN", SCAN),
         ("CLS", CLS),
         ("HALT", HALT)
