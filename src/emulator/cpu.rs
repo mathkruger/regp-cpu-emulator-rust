@@ -1,5 +1,6 @@
-use std::{io, ops::Add};
+use std::io;
 use crate::common::constants::*;
+use crate::common::helpers::read_string;
 
 pub fn start(program: &Vec<i32>) {
     let mut regs: [i32; 4] = [0, 0, 0, 0];
@@ -195,20 +196,4 @@ fn run_instruction(
     }
 
     (regs, stack, halted, current_pc)
-}
-
-fn read_string(program: &Vec<i32>, mut pc: i32) -> (String, i32) {
-    let mut total_string: String = String::new();
-
-    if program[pc as usize] == STRING_STOPPER {
-        pc = pc + 1;
-        while program[pc as usize] != STRING_STOPPER {
-            let char_code: u8 = program[pc as usize] as u8;
-            let char_to_add: char = char_code as char;
-            total_string = total_string.add(&char_to_add.to_string());
-            pc = pc + 1;
-        }
-    }
-
-    (total_string, pc)
 }

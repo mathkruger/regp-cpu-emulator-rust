@@ -1,6 +1,7 @@
 use regex::Regex;
 
 use crate::common::constants::*;
+use crate::common::helpers::*;
 
 pub fn assemble(code: String) -> String {
     let tokens: Vec<Vec<String>> = get_tokens(&code);
